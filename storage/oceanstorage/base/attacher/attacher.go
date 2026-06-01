@@ -78,12 +78,13 @@ func NewAttachmentManager(config AttachmentManagerConfig) *AttachmentManager {
 }
 
 func (p *AttachmentManager) getHostName(postfix string) string {
-	host := fmt.Sprintf("k8s_%s", postfix)
-	if len(host) <= maxHostNameLength {
-		return host
+	/* HC: not add 'k8s_' prefix on the hostname */
+	// host := fmt.Sprintf("k8s_%s", postfix)
+	if len(postfix) <= maxHostNameLength {
+		return postfix
 	}
 
-	return host[:maxHostNameLength]
+	return postfix[:maxHostNameLength]
 }
 
 func (p *AttachmentManager) getHostGroupName(postfix string) string {
