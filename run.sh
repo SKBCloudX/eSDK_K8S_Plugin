@@ -1,9 +1,8 @@
 #!/bin/bash
 
 ACTION=$1
-VER=$2
-
-IMAGE_NAME="huawei-esdk-builder:debian13-go1.24.1"
+VER=${2:-4.11.0}
+IMAGE_NAME="docker.io/skbcloudx/huawei-esdk-builder:debian13-go1.24.1"
 
 usage() {
   echo "Usage: $0 [-b|-r] [options]"
@@ -20,21 +19,22 @@ mkdir -p ./output
 
 case "$ACTION" in
   -b | --build)
-    if [ -z "$VER" ]; then
-      usage
-    fi
     docker run --rm \
         -v /run/docker.sock:/run/docker.sock \
-        -v "$(pwd)/output:/workspace" \
-        "${IMAGE_NAME}" "${VER}" "X86"
+        -v "$(pwd)/output:/workspace/output" \
+        -e HOST_UID=$(id -u) \
+        -e HOST_GID=$(id -g) \
+        "${IMAGE_NAME}" "${VER}"
     ;;
   -i | --image)
-    docker build -t "${IMAGE_NAME}" -f Dockerfile-skb .
+    docker build -t "${IMAGE_NAME}" -f scripts/Dockerfile-skb .
     ;;
   -r | --run)
     docker run --rm -it \
         -v /run/docker.sock:/run/docker.sock \
-        -v "$(pwd)/output:/workspace" \
+        -v "$(pwd)/output:/workspace/output" \
+        -e HOST_UID=$(id -u) \
+        -e HOST_GID=$(id -g) \
         --entrypoint=/bin/bash \
         "${IMAGE_NAME}"
     ;;

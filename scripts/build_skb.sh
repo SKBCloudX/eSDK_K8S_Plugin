@@ -20,23 +20,23 @@
 # [x.y.z]
 VER=$1
 # [X86 ARM]
-PLATFORM=$2
+PLATFORM="X86"
 
 ## HC: BEGIN
 # check out $VER tag if exists. If not, abort
-TARGET_GIT_TAG="v${VER}-skb"
+GIT_TAG="v${VER}-skb"
 git fetch --tags origin 2>/dev/null
-if ! git rev-parse "${TARGET_GIT_TAG}" &>/dev/null; then
-  echo "Abort: Cannot find the tag: ${TARGET_GIT_TAG}"
+if ! git rev-parse "${GIT_TAG}" &>/dev/null; then
+  echo "Abort: Cannot find the tag: ${GIT_TAG}"
   exit 1
 fi
-git checkout "${TARGET_GIT_TAG}"
+git checkout "${GIT_TAG}"
 ## HC: END
 
 package_name="eSDK_Storage_CSI_V${VER}_${PLATFORM}_64"
 
 echo "Start to make with Makefile"
-make -f Makefile VER=$1 PLATFORM=$2
+make -f Makefile VER=$1 PLATFORM=${PLATFORM}
 
 echo "Platform confirmation"
 if [[ "${PLATFORM}" == "ARM" ]];then
